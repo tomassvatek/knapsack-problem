@@ -1,6 +1,9 @@
-﻿namespace KnapsackProblem
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+
+namespace KnapsackProblem
 {
-    public class Item
+    public class Item : IComparable<Item>
     {
         public Item(int weight, int price)
         {
@@ -11,7 +14,17 @@
         public int Weight { get; }
         public int Price { get; }
 
-        public override string ToString()
-            => $"Weight: {Weight}; Price: {Price}";
+        public int CompareTo([AllowNull] Item other)
+        {
+            var ratio = Price / Weight;
+            var otherRation = other.Price / other.Weight;
+
+            if (ratio > otherRation)
+                return -1;
+            if (ratio < otherRation)
+                return 1;
+            else
+                return 0;
+        }
     }
 }

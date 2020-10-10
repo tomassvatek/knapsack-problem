@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace KnapsackProblem
 {
@@ -23,9 +21,21 @@ namespace KnapsackProblem
             return ParseInstance(line);
         }
 
-        public static int LoadSolution(string instanceFilePath, int N, int instanceId)
+        public static int LoadSolutionForNR(string instanceFilePath, int N, int instanceId)
         {
-            var solutionFilePath = instanceFilePath.Remove(instanceFilePath.Length - 13, 13) + $"NK{N}_sol.dat";
+            var solutionFilePath = $"{Path.GetDirectoryName(instanceFilePath)}\\NK{ N}_sol.dat";
+            return LoadSolution(instanceId, solutionFilePath);
+        }
+
+
+        public static int LoadSolutionForZR(string instanceFilePath, int N, int instanceId)
+        {
+            var solutionFilePath = $"{Path.GetDirectoryName(instanceFilePath)}\\ZK{N}_sol.dat";
+            return LoadSolution(instanceId, solutionFilePath);
+        }
+
+        private static int LoadSolution(int instanceId, string solutionFilePath)
+        {
             using var streamReader = new StreamReader(solutionFilePath);
             string line;
             while ((line = streamReader.ReadLine()) != null)
