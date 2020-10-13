@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace KnapsackProblem
 {
-    public static class InputLoader
+    public static class InstanceLoader
     {
+
         public static Instance LoadInstanceAsync(string filePath, int instanceId)
         {
             using var streamReader = new StreamReader(filePath);
@@ -21,14 +23,24 @@ namespace KnapsackProblem
             return ParseInstance(line);
         }
 
-        public static int LoadSolutionForNR(string instanceFilePath, int N, int instanceId)
+        public static int LoadSolution(string instanceFilePath, int instanceId, int N, DatasetTypes datasetType)
+        {
+            return datasetType switch
+            {
+                DatasetTypes.NR => InstanceLoader.LoadSolutionForNR(instanceFilePath, N, instanceId * -1),
+                DatasetTypes.ZR => InstanceLoader.LoadSolutionForZR(instanceFilePath, N, instanceId * -1),
+                _ => throw new Exception("Dataset is not supported"),
+            };
+        }
+
+        private static int LoadSolutionForNR(string instanceFilePath, int N, int instanceId)
         {
             var solutionFilePath = $"{Path.GetDirectoryName(instanceFilePath)}\\NK{ N}_sol.dat";
             return LoadSolution(instanceId, solutionFilePath);
         }
 
 
-        public static int LoadSolutionForZR(string instanceFilePath, int N, int instanceId)
+        private static int LoadSolutionForZR(string instanceFilePath, int N, int instanceId)
         {
             var solutionFilePath = $"{Path.GetDirectoryName(instanceFilePath)}\\ZK{N}_sol.dat";
             return LoadSolution(instanceId, solutionFilePath);
@@ -63,7 +75,9 @@ namespace KnapsackProblem
 
             instance.Id = int.Parse(items[0]);
             instance.N = int.Parse(items[1]);
-            instance.Weight = int.Parse(items[2]);
+            instance.MaxWeight = int.Parse(items[2]);
+            instance.MaxWeight = int.Parse(items[2]);
+            instance.MinPrice = int.Parse(items[3]);
 
             instance.Weights = ParseValues(items, 4);
             instance.Prices = ParseValues(items, 5);
@@ -89,7 +103,8 @@ namespace KnapsackProblem
         public int Id { get; set; }
         public int SolutionId => Id * -1;
         public int N { get; set; }
-        public int Weight { get; set; }
+        public int MaxWeight { get; set; }
+        public int MinPrice { get; set; }
 
         public int[] Prices { get; set; }
         public int[] Weights { get; set; }
