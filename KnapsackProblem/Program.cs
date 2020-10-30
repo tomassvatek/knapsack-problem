@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
+using KnapsackProblem.Algorithms;
 
 namespace KnapsackProblem
 {
@@ -30,79 +33,42 @@ namespace KnapsackProblem
                 @"C:\Users\tomas.svatek\Desktop\ZR\ZR25_inst.dat",
             };
 
-            var csvSummaryBuilder = new StringBuilder();
-            csvSummaryBuilder.AppendLine(TestResultHelper.GetSummaryResultHeader());
 
-            foreach (var instanceFilePath in NRInstanceFilePaths)
-            {
-                var instanceResult = ExecuteTest(instanceFilePath, 500, 3, DatasetTypes.NR);
-                var fileName = Path.GetFileNameWithoutExtension(instanceFilePath);
-                File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\{fileName}_result.result.csv", instanceResult.InstancesResults);
+            var instance = InstanceLoader.LoadInstanceAsync(NRInstanceFilePaths[0], -22);
+            //var bruteForceResult = KnapsackBruteForce(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice);
 
-                csvSummaryBuilder.AppendLine(TestResultHelper.FormatSummaryRow(instanceResult.N, instanceResult.BruteForceAvgTime, instanceResult.BAndBAvgTime));
-            }
+            //var bruteForceResult = KnapsackBruteForce.Construct(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice, new int[instance.N + 1], new int[instance.N + 1]);
+            //var BandBForceResult = KnapsackBAndB.Construct(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice, new int[instance.N + 1], new int[instance.N + 1]);
+            //var DPResult = KnapsackDP.Construct(instance.Weights, instance.Prices, instance.MaxWeight, instance.Prices.Sum());
+            //var DPResult = KnapsackDP.knapSack(instance.Prices.Sum(), instance.Weights, instance.Prices, instance.N);
+            var greedy = HeuristicAlgorithm.SolveUsingGreedyHeuristic(instance.Weights, instance.Prices, instance.MaxWeight);
+            var redux = HeuristicAlgorithm.SolveUsingReduxHeuristic(instance.Weights, instance.Prices, instance.MaxWeight);
 
-            File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\NR_summary.result.csv", csvSummaryBuilder.ToString());
+            //var csvSummaryBuilder = new StringBuilder();
+            //csvSummaryBuilder.AppendLine(TestResultHelper.GetSummaryResultHeader());
 
-            foreach (var instanceFilePath in ZRInstanceFilePaths)
-            {
-                var instanceResult = ExecuteTest(instanceFilePath, 500, 3, DatasetTypes.ZR);
-                var fileName = Path.GetFileNameWithoutExtension(instanceFilePath);
-                File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\{fileName}.result.csv", instanceResult.InstancesResults);
+            //foreach (var instanceFilePath in NRInstanceFilePaths)
+            //{
+            //    var instanceResult = ExecuteTest(instanceFilePath, 500, 3, DatasetTypes.NR);
+            //    var fileName = Path.GetFileNameWithoutExtension(instanceFilePath);
+            //    File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\{fileName}_result.result.csv", instanceResult.InstancesResults);
 
-                csvSummaryBuilder.AppendLine(TestResultHelper.FormatSummaryRow(instanceResult.N, instanceResult.BruteForceAvgTime, instanceResult.BAndBAvgTime));
-            }
+            //    csvSummaryBuilder.AppendLine(TestResultHelper.FormatSummaryRow(instanceResult.N, instanceResult.BruteForceAvgTime, instanceResult.BAndBAvgTime));
+            //}
 
-            File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\ZR_summary.result.csv", csvSummaryBuilder.ToString());
+            //File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\NR_summary.result.csv", csvSummaryBuilder.ToString());
+
+            //foreach (var instanceFilePath in ZRInstanceFilePaths)
+            //{
+            //    var instanceResult = ExecuteTest(instanceFilePath, 500, 3, DatasetTypes.ZR);
+            //    var fileName = Path.GetFileNameWithoutExtension(instanceFilePath);
+            //    File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\{fileName}.result.csv", instanceResult.InstancesResults);
+
+            //    csvSummaryBuilder.AppendLine(TestResultHelper.FormatSummaryRow(instanceResult.N, instanceResult.BruteForceAvgTime, instanceResult.BAndBAvgTime));
+            //}
+
+            //File.WriteAllText($@"C:\Users\tomas.svatek\Desktop\knapsack_results\ZR_summary.result.csv", csvSummaryBuilder.ToString());
         }
-
-        static bool KnapsackBruteForce(int index, int[] weights, int[] prices, int currPrice, int currWeight, int maxWeight, int minPrice)
-        {
-            bool includeItemResult = false, excludeItemResult = false;
-
-            if (index == weights.Length)
-            {
-                if (currWeight <= maxWeight && currPrice >= minPrice)
-                    return true;
-            }
-            else
-            {
-                includeItemResult = KnapsackBruteForce(index + 1, weights, prices, prices[index] + currPrice, weights[index] + currWeight, maxWeight, minPrice);
-                excludeItemResult = KnapsackBruteForce(index + 1, weights, prices, currPrice, currWeight, maxWeight, minPrice);
-            }
-
-            return includeItemResult || excludeItemResult;
-        }
-
-        static bool KnapsackBAndB(int index, int[] weights, int[] prices, int currPrice, int currWeight, int maxWeight, int minPrice)
-        {
-            if (currWeight <= maxWeight && currPrice >= minPrice)
-                return true;
-
-            if (index == weights.Length)
-                return false;
-
-            var bestPossiblePrice = currPrice;
-            for (int i = index; i < weights.Length; i++)
-            {
-                bestPossiblePrice += prices[i];
-                if (bestPossiblePrice + prices[i] >= minPrice)
-                    break;
-            }
-
-            if (bestPossiblePrice < currPrice)
-                return false;
-
-            bool result = false;
-            if (maxWeight >= weights[index] + currWeight)
-                result = KnapsackBAndB(index + 1, weights, prices, prices[index] + currPrice, weights[index] + currWeight, maxWeight, minPrice);
-
-            if (result)
-                return true;
-            else
-                return KnapsackBAndB(index + 1, weights, prices, currPrice, currWeight, maxWeight, minPrice);
-        }
-
 
         private static TestResult ExecuteTest(string filePath, int instanceCount, int measurementCount, DatasetTypes datasetType)
         {
@@ -134,7 +100,7 @@ namespace KnapsackProblem
 
                     // Start measurement for Brute Force
                     stopwatch.Start();
-                    var bruteForceResult = KnapsackBruteForce(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice);
+                    var bruteForceResult = KnapsackBruteForce.Decide(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice);
                     stopwatch.Stop();
 
                     CheckResult(instance, bruteForceResult, optimalSolution, datasetType, nameof(KnapsackBruteForce));
@@ -144,7 +110,7 @@ namespace KnapsackProblem
 
                     // Start measurement for B&B
                     stopwatch.Start();
-                    var bAndBResult = KnapsackBAndB(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice);
+                    var bAndBResult = KnapsackBAndB.Decide(0, instance.Weights, instance.Prices, 0, 0, instance.MaxWeight, instance.MinPrice);
                     stopwatch.Stop();
 
                     CheckResult(instance, bAndBResult, optimalSolution, datasetType, nameof(KnapsackBAndB));
