@@ -1,6 +1,6 @@
 ﻿namespace KnapsackProblem.Algorithms
 {
-    public static class KnapsackBruteForce
+    public static class BruteForce  
     {
         public static bool Decide(int index, int[] weights, int[] prices, int currPrice, int currWeight, int maxWeight, int minPrice)
         {
@@ -21,7 +21,7 @@
         }
 
 
-        public static int[] Construct(int index, int[] weights, int[] prices, int currPrice, 
+        public static int[] Solve(int index, int[] weights, int[] prices, int currPrice, 
             int currWeight, int maxWeight, int minPrice, int[] config, int[] bestConfig)
         {
             if (index == weights.Length)
@@ -43,11 +43,11 @@
             {
                 // Include item to the knapsack
                 config[index] = 1;
-                Construct(index + 1, weights, prices, prices[index] + currPrice, weights[index] + currWeight, maxWeight, minPrice, config, bestConfig);
+                Solve(index + 1, weights, prices, prices[index] + currPrice, weights[index] + currWeight, maxWeight, minPrice, config, bestConfig);
 
                 // Not include item to the knapsack
                 config[index] = 0;
-                Construct(index + 1, weights, prices, currPrice, currWeight, maxWeight, minPrice, config, bestConfig);
+                Solve(index + 1, weights, prices, currPrice, currWeight, maxWeight, minPrice, config, bestConfig);
             }
 
             return bestConfig;
