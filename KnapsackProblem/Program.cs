@@ -42,45 +42,45 @@ namespace KnapsackProblem
             var filePathResult = $@"{FilePathResults}\{"NK"}_FPTAS_result-summary.csv";
             File.WriteAllText(filePathResult, csvSummaryBuilder.ToString());
 
-            csvSummaryBuilder.Clear();
-            csvSummaryBuilder.AppendLine(TestResultHelper.GetFTPASummaryHeader());
+            //csvSummaryBuilder.Clear();
+            //csvSummaryBuilder.AppendLine(TestResultHelper.GetFTPASummaryHeader());
 
-            foreach (var dataSet in dataSetsZKC)
-            {
-                var result = RunFPTAS(dataSet, errors);
-                //var result = RunAlgorithms(dataSet, MeasurementCount);
-                var resultFilePath = dataSet.GetResultFilePath(FilePathResults);
+            //foreach (var dataSet in dataSetsZKC)
+            //{
+            //    var result = RunFPTAS(dataSet, errors);
+            //    //var result = RunAlgorithms(dataSet, MeasurementCount);
+            //    var resultFilePath = dataSet.GetResultFilePath(FilePathResults);
 
-                WriteFTPASSummaryRow(csvSummaryBuilder, result.Item1);
+            //    WriteFTPASSummaryRow(csvSummaryBuilder, result.Item1);
 
-                if (!Directory.Exists(resultFilePath))
-                    Directory.CreateDirectory(resultFilePath);
+            //    if (!Directory.Exists(resultFilePath))
+            //        Directory.CreateDirectory(resultFilePath);
 
-                File.WriteAllText($"{resultFilePath}.{dataSet.Name}_FPTAS_result.csv", result.instanceResult);
-            }
+            //    File.WriteAllText($"{resultFilePath}.{dataSet.Name}_FPTAS_result.csv", result.instanceResult);
+            //}
 
-            filePathResult = $@"{FilePathResults}\{"ZKC"}_FPTAS_result-summary.csv";
-            File.WriteAllText(filePathResult, csvSummaryBuilder.ToString());
+            //filePathResult = $@"{FilePathResults}\{"ZKC"}_FPTAS_result-summary.csv";
+            //File.WriteAllText(filePathResult, csvSummaryBuilder.ToString());
 
-            csvSummaryBuilder.Clear();
-            csvSummaryBuilder.AppendLine(TestResultHelper.GetFTPASummaryHeader());
+            //csvSummaryBuilder.Clear();
+            //csvSummaryBuilder.AppendLine(TestResultHelper.GetFTPASummaryHeader());
 
-            foreach (var dataSet in dataSetsZKW)
-            {
-                var result = RunFPTAS(dataSet, errors);
-                //var result = ExecuteTest(dataSet, MeasurementCount);
-                var resultFilePath = dataSet.GetResultFilePath(FilePathResults);
+            //foreach (var dataSet in dataSetsZKW)
+            //{
+            //    var result = RunFPTAS(dataSet, errors);
+            //    //var result = ExecuteTest(dataSet, MeasurementCount);
+            //    var resultFilePath = dataSet.GetResultFilePath(FilePathResults);
 
-                WriteFTPASSummaryRow(csvSummaryBuilder, result.Item1);
+            //    WriteFTPASSummaryRow(csvSummaryBuilder, result.Item1);
 
-                if (!Directory.Exists(resultFilePath))
-                    Directory.CreateDirectory(resultFilePath);
+            //    if (!Directory.Exists(resultFilePath))
+            //        Directory.CreateDirectory(resultFilePath);
 
-                File.WriteAllText($"{resultFilePath}.{dataSet.Name}_FPTAS_result.csv", result.instanceResult);
-            }
+            //    File.WriteAllText($"{resultFilePath}.{dataSet.Name}_FPTAS_result.csv", result.instanceResult);
+            //}
 
-            filePathResult = $@"{FilePathResults}\{"ZKW"}_FPTAS_result-summary.csv";
-            File.WriteAllText(filePathResult, csvSummaryBuilder.ToString());
+            //filePathResult = $@"{FilePathResults}\{"ZKW"}_FPTAS_result-summary.csv";
+            //File.WriteAllText(filePathResult, csvSummaryBuilder.ToString());
         }
 
         // Measure algorithms time

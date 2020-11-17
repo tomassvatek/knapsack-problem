@@ -8,9 +8,13 @@ namespace KnapsackProblem.Algorithms
     {
         public static int[] Solve(IReadOnlyList<Item> items, int maxWeight, double maxError)
         {
-            var highestPrice = items.Max(x => x.Price);
-            double shift = highestPrice * maxError / items.Count;
+            var itemsFit = items.Where(x => x.Weight <= maxWeight).ToList();//.Max(x => x.Price);
+            if (itemsFit == null || !itemsFit.Any())
+                return new int[items.Count + 1];
 
+            var highestPrice = itemsFit.Max(x => x.Price);
+
+            double shift = highestPrice * maxError / items.Count;
             var reducedItems = new List<Item>();
             foreach (var item in items)
             {
